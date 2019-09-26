@@ -11,17 +11,17 @@ exports.create = (req, res) => {
 
     // Create a order
     const order = new Order({
-        order_requester: req.body.order_requester,
-        order_requester_phone: req.body.order_requester_phone || '',
-        order_vendor: req.body.order_vendor,
-        order_manager: req.body.order_manager,
-        order_shipment_cost: req.body.order_shipment_cost,
-        order_total_cost: req.body.order_total_cost,
-        order_items: req.body.order_items,
-        order_authorized: req.body.order_authorized || '',
-        order_po: req.body.order_po || '',
-        order_pay_terms: req.body.order_pay_terms || '',
-        order_accounts: req.body.order_accounts || '',
+        requester: req.body.requester,
+        requester_phone: req.body.requester_phone || '',
+        vendor: req.body.vendor,
+        manager: req.body.manager,
+        shipment_cost: req.body.shipment_cost,
+        total_cost: req.body.total_cost,
+        items: req.body.items,
+        authorized: req.body.authorized || '',
+        po: req.body.po || '',
+        pay_terms: req.body.pay_terms || '',
+        accounts: req.body.accounts || '',
         status: req.body.status || '',
     });
 
@@ -77,18 +77,18 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     // Find order and update it with the request body
     Order.findByIdAndUpdate(req.params.orderId, {
-        order_requester: req.body.order_requester,
-        order_requester_phone: req.body.order_requester_phone || '',
-        order_vendor: req.body.order_vendor,
-        order_manager: req.body.order_manager,
-        order_manager_note: req.body.order_manager_note || '',
-        order_shipment_cost: req.body.order_shipment_cost,
-        order_total_cost: req.body.order_total_cost,
-        order_items: req.body.order_items,
-        order_authorized: req.body.order_authorized || '',
-        order_po: req.body.order_po || '',
-        order_pay_terms: req.body.order_pay_terms || '',
-        order_accounts: req.body.order_accounts || '',
+        requester: req.body.requester,
+        requester_phone: req.body.requester_phone || '',
+        vendor: req.body.vendor,
+        manager: req.body.manager,
+        manager_note: req.body.manager_note || '',
+        shipment_cost: req.body.shipment_cost,
+        total_cost: req.body.total_cost,
+        items: req.body.items,
+        authorized: req.body.authorized || '',
+        po: req.body.po || '',
+        pay_terms: req.body.pay_terms || '',
+        accounts: req.body.accounts || '',
         status: req.body.status || '',
     }, {new: true})
         .then(order => {

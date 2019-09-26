@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = mongoose.Schema({
-    order_requester: String,
-    order_requester_phone: String,
-    order_vendor: {
-        order_vendor_name: String,
-        order_vendor_address: String,
-        order_vendor_phone: String,
-        order_vendor_fax: String
+    requester: String,
+    requester_phone: String,
+    vendor: {
+        vendor_name: String,
+        vendor_address: String,
+        vendor_phone: String,
+        vendor_fax: String
     },
-    order_manager: String,
-    order_manager_note: String,
-    order_shipment_cost: Number,
-    order_total_cost: Number,
+    manager: String,
+    manager_note: String,
+    shipment_cost: Number,
+    total_cost: Number,
     order_items: Array,
-    order_authorized: String,
-    order_po: String,
-    order_pay_terms: String,
-    order_accounts: String,
+    authorized: String,
+    po: String,
+    pay_terms: String,
+    accounts: String,
     status: String,
 }, {
     timestamps: true
