@@ -15,4 +15,13 @@ module.exports = (app) => {
 
     // Delete a order with orderId
     app.delete('/orders/:orderId', orders.delete);
+
+    // Create new items
+    app.post('/items', orders.createItem);
+
+    // Retrieve all items
+    app.get('/items', orders.findAllItems);
+
+    // Update a order with orderId
+    app.put('/items/:itemId', orders.updateItem);
 }
