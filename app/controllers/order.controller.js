@@ -137,7 +137,7 @@ exports.createItem = (req, res) => {
         for (let i = 1; i <= order_item.order_quantity; i++) {
             // Create an item
             let item = new Item({
-                item_id: '00' + i.toString(),
+                item_id: 'not set',
                 item_name: order_item.order_name,
                 item_unit_price: order_item.order_unit_price,
                 item_description: order_item.order_description,
