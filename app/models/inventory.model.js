@@ -7,6 +7,7 @@ const ItemSchema = mongoose.Schema({
     item_description: String,
     requester: String,
     manager: String,
+    manager_email: String,
     vendor: {
         vendor_name: String,
         vendor_address: String,

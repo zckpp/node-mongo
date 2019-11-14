@@ -1,5 +1,11 @@
+// mongoose models
 const Order = require('../models/order.model.js');
 const Item = require('../models/inventory.model.js');
+// config logging
+const logger = require('../../config/winston.config').logger;
+// config nodemailer
+const serviceEmail = require('../../config/nodeMailer.config').serviceEmail;
+const transporter = require('../../config/nodeMailer.config').transporter;
 
 // CRUD for request orders
 // Create and Save a new order
@@ -10,6 +16,7 @@ exports.create = (req, res) => {
         requester_phone: req.body.requester_phone || '',
         vendor: req.body.vendor,
         manager: req.body.manager,
+        manager_email: req.body.manager_email,
         shipment_cost: req.body.shipment_cost,
         total_cost: req.body.total_cost,
         order_items: req.body.order_items,
@@ -26,10 +33,24 @@ exports.create = (req, res) => {
                 message: "order saved successfully.",
                 status: 200
             });
+            let mailOptions = {
+                from: serviceEmail,
+                to: 'qzhang@carnegiescience.edu',
+                subject: 'An gas cylinder order was created!',
+                text: `A request from ${req.body.requester} was created!`
+            }
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    logger.log('error',`Error Message : ${error}`);
+                } else {
+                    logger.log('info','Email sent: ' + info.response);
+                }
+            });
         }).catch(err => {
         res.status(500).send({
             message: err.message || "Some error occurred while creating the order."
         });
+        logger.log('error',`Error Message : ${err.message}`);
     });
 };
 
@@ -49,14 +70,14 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     Order.findById(req.params.orderId)
         .then(order => {
-            if(!order) {
+            if (!order) {
                 return res.status(404).send({
                     message: "order not found with id " + req.params.orderId
                 });
             }
             res.send(order);
         }).catch(err => {
-        if(err.kind === 'ObjectId') {
+        if (err.kind === 'ObjectId') {
             return res.status(404).send({
                 message: "order not found with id " + req.params.orderId
             });
@@ -75,6 +96,7 @@ exports.update = (req, res) => {
         requester_phone: req.body.requester_phone || '',
         vendor: req.body.vendor,
         manager: req.body.manager,
+        manager_email: req.body.manager_email,
         manager_note: req.body.manager_note || '',
         shipment_cost: req.body.shipment_cost,
         total_cost: req.body.total_cost,
@@ -86,7 +108,7 @@ exports.update = (req, res) => {
         status: req.body.status || '',
     }, {new: true})
         .then(order => {
-            if(!order) {
+            if (!order) {
                 return res.status(404).send({
                     message: "order not found with id " + req.params.orderId
                 });
@@ -96,7 +118,7 @@ exports.update = (req, res) => {
                 status: 200
             });
         }).catch(err => {
-        if(err.kind === 'ObjectId') {
+        if (err.kind === 'ObjectId') {
             return res.status(404).send({
                 message: "order not found with id " + req.params.orderId
             });
@@ -111,14 +133,14 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     Order.findByIdAndRemove(req.params.orderId)
         .then(order => {
-            if(!order) {
+            if (!order) {
                 return res.status(404).send({
                     message: "order not found with id " + req.params.orderId
                 });
             }
             res.send({message: "order deleted successfully!"});
         }).catch(err => {
-        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
             return res.status(404).send({
                 message: "order not found with id " + req.params.orderId
             });
@@ -150,7 +172,7 @@ exports.createItem = (req, res) => {
         }
     });
     // Save items in the database
-    Item.insertMany(items, { ordered : false })
+    Item.insertMany(items, {ordered: false})
         .then(data => {
             res.status(200).send({
                 message: data,
@@ -182,7 +204,7 @@ exports.updateItem = (req, res) => {
         item_id: req.body.item_id,
     }, {new: true})
         .then(item => {
-            if(!item) {
+            if (!item) {
                 return res.status(404).send({
                     message: "item not found with id " + req.params.itemId
                 });
@@ -192,7 +214,7 @@ exports.updateItem = (req, res) => {
                 status: 200
             });
         }).catch(err => {
-        if(err.kind === 'ObjectId') {
+        if (err.kind === 'ObjectId') {
             return res.status(404).send({
                 message: "item not found with id " + req.params.itemId
             });

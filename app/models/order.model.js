@@ -10,6 +10,7 @@ const OrderSchema = mongoose.Schema({
         vendor_fax: String
     },
     manager: String,
+    manager_email: String,
     manager_note: String,
     shipment_cost: Number,
     total_cost: Number,
