@@ -1,0 +1,20 @@
+{
+  level: 'info',
+  message: 'Email sent: 250 2.0.0 OK  1573675748 r36sm1942609qta.27 - gsmtp',
+  timestamp: '2019-11-13 15:09:08'
+}
+{
+  level: 'info',
+  message: 'Email sent: 250 2.0.0 OK  1573750217 p85sm2720007qke.79 - gsmtp',
+  timestamp: '2019-11-14 11:50:17'
+}
+{
+  level: 'info',
+  message: 'Email sent: 250 2.0.0 OK  1573752036 r2sm3415898qtc.28 - gsmtp',
+  timestamp: '2019-11-14 12:20:36'
+}
+{
+  level: 'info',
+  message: 'Email sent: 250 2.0.0 OK  1573755329 27sm3675034qtu.71 - gsmtp',
+  timestamp: '2019-11-14 13:15:29'
+}

@@ -37,32 +37,82 @@ exports.create = (req, res) => {
                 from: serviceEmail,
                 to: 'qzhang@carnegiescience.edu',
                 subject: 'An gas cylinder order was created!',
-                text: `A request from ${req.body.requester} was created!`
+                html: `
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
+        'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+    <title>Carnegie Gas Cylinder Order System</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+</head>
+<body style='margin: 0; padding: 0; background-color: #f7f9fa;'>
+<table border='0' cellpadding='0' cellspacing='0' width='100%'>
+    <tr>
+        <td style='padding: 10px 0 30px 0;'>
+            <table align='center' border='0' cellpadding='0' cellspacing='0' width='600'
+                   style='border-collapse: collapse;'>
+                <tr>
+                    <td bgcolor='#f7f9fa'>
+                        <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                            <tr>
+                                <td>
+
+                                    <h3>Carnegie Gas Cylinder Order System</h3>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor='#ffffff' style='padding: 30px; border-top: 2px solid #5eb6cd;'>
+                        <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                            <tr>
+                                <td style='padding: 10px 0 20px 20px;font-size: 11.5pt; line-height: 23px; font-family: helvetica,sans-serif; color: rgb(96,96,96);'>
+
+                                    <p>A request from ${req.body.requester} was created!</p>
+  <p><a href="https://mycarnegie.carnegiescience.edu/bbr-gas-order-dashboard-manager">Click here to check out.</a></p>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>`
             }
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
-                    logger.log('error',`Error Message : ${error}`);
+                    logger.log('error', `Error Message : ${error}`);
                 } else {
-                    logger.log('info','Email sent: ' + info.response);
+                    logger.log('info', 'Email sent: ' + info.response);
                 }
             });
         }).catch(err => {
         res.status(500).send({
             message: err.message || "Some error occurred while creating the order."
         });
-        logger.log('error',`Error Message : ${err.message}`);
+        logger.log('error', `Error Message : ${err.message}`);
     });
 };
 
 // Retrieve and return all orders from the database.
 exports.findAll = (req, res) => {
-    Order.find()
+    Order.find().sort( { createdAt: -1 } )
         .then(orders => {
             res.send(orders);
         }).catch(err => {
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving orders."
         });
+        logger.log('error', `Error Message : ${err.message}`);
     });
 };
 
@@ -112,11 +162,140 @@ exports.update = (req, res) => {
                 return res.status(404).send({
                     message: "order not found with id " + req.params.orderId
                 });
+            } else {
+                res.status(200).send({
+                    message: "Note is added successfully.",
+                    status: 200
+                });
+                if ('approved' == req.body.status) {
+                    // TODO: send email to requester and accounting when approved
+                    let mailOptions = {
+                        from: serviceEmail,
+                        to: 'qzhang@carnegiescience.edu',
+                        subject: 'Your cylinder order was approved!',
+                        html: `
+                        <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
+        'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+    <title>Carnegie Gas Cylinder Order System</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+</head>
+<body style='margin: 0; padding: 0; background-color: #f7f9fa;'>
+<table border='0' cellpadding='0' cellspacing='0' width='100%'>
+    <tr>
+        <td style='padding: 10px 0 30px 0;'>
+            <table align='center' border='0' cellpadding='0' cellspacing='0' width='600'
+                   style='border-collapse: collapse;'>
+                <tr>
+                    <td bgcolor='#f7f9fa'>
+                        <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                            <tr>
+                                <td>
+
+                                    <h3>Carnegie Gas Cylinder Order System</h3>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor='#ffffff' style='padding: 30px; border-top: 2px solid #5eb6cd;'>
+                        <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                            <tr>
+                                <td style='padding: 10px 0 20px 20px;font-size: 11.5pt; line-height: 23px; font-family: helvetica,sans-serif; color: rgb(96,96,96);'>
+
+                                    <p>Your request was approved by ${req.body.manager}.</p>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>`
+                    }
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            logger.log('error', `Error Message : ${error}`);
+                        } else {
+                            logger.log('info', 'Email sent: ' + info.response);
+                        }
+                    });
+                } else if ('declined' == req.body.status) {
+                    // TODO: send email to requester when declined
+                    let mailOptions = {
+                        from: serviceEmail,
+                        to: 'qzhang@carnegiescience.edu',
+                        subject: 'Your cylinder order was declined.',
+                        html: `
+                        <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'
+        'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+    <title>Carnegie Gas Cylinder Order System</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+</head>
+<body style='margin: 0; padding: 0; background-color: #f7f9fa;'>
+<table border='0' cellpadding='0' cellspacing='0' width='100%'>
+    <tr>
+        <td style='padding: 10px 0 30px 0;'>
+            <table align='center' border='0' cellpadding='0' cellspacing='0' width='600'
+                   style='border-collapse: collapse;'>
+                <tr>
+                    <td bgcolor='#f7f9fa'>
+                        <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                            <tr>
+                                <td>
+
+                                    <h3>Carnegie Gas Cylinder Order System</h3>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor='#ffffff' style='padding: 30px; border-top: 2px solid #5eb6cd;'>
+                        <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                            <tr>
+                                <td style='padding: 10px 0 20px 20px;font-size: 11.5pt; line-height: 23px; font-family: helvetica,sans-serif; color: rgb(96,96,96);'>
+
+                                    <p>Your request was declined by ${req.body.manager}.</p>
+                                    <p>The reason is ${req.body.manager_note}</p>
+
+                                </td>
+                            </tr>
+
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>`
+                    }
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            logger.log('error', `Error Message : ${error}`);
+                        } else {
+                            logger.log('info', 'Email sent: ' + info.response);
+                        }
+                    });
+                }
             }
-            res.status(200).send({
-                message: "Note is added successfully.",
-                status: 200
-            });
         }).catch(err => {
         if (err.kind === 'ObjectId') {
             return res.status(404).send({
@@ -126,6 +305,7 @@ exports.update = (req, res) => {
         return res.status(500).send({
             message: "Error updating order with id " + req.params.orderId
         });
+        logger.log('error', `Error Message : ${err.message}`);
     });
 };
 
@@ -182,18 +362,20 @@ exports.createItem = (req, res) => {
         res.status(500).send({
             message: err.message || "Some error occurred while creating items."
         });
+        logger.log('error', `Error Message : ${err.message}`);
     });
 };
 
 // Retrieve and return all items from the database.
 exports.findAllItems = (req, res) => {
-    Item.find()
+    Item.find().sort( { createdAt: -1 } )
         .then(items => {
             res.send(items);
         }).catch(err => {
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving items."
         });
+        logger.log('error', `Error Message : ${err.message}`);
     });
 };
 
@@ -222,5 +404,6 @@ exports.updateItem = (req, res) => {
         return res.status(500).send({
             message: "Error updating item with id " + req.params.itemId
         });
+        logger.log('error', `Error Message : ${err.message}`);
     });
 };

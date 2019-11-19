@@ -16,7 +16,8 @@ app.use(bodyParser.json());
 
 // add cors support for local development
 app.use(cors({
-    origin: ['http://localhost:4200',
+    origin: [
+        'http://localhost:4200',
         'https://mycarnegie.carnegiescience.edu',
         'https://dev-people.carnegiescience.edu',]
 }));
@@ -48,9 +49,11 @@ app.get('/', (req, res) => {
 // Require orders routes
 require('./app/routes/order.routes.js')(app);
 
+// SSL certificate
+const sslConfig = require('./config/ssl.config.js');
 https.createServer({
-    key: fs.readFileSync('/etc/pki/tls/digicert/star_carnegiescience_edu.key'),
-    cert: fs.readFileSync('/etc/pki/tls/digicert/star_carnegiescience_edu.pem')
+    key: fs.readFileSync(sslConfig.key),
+    cert: fs.readFileSync(sslConfig.cert)
 }, app).listen(3000, () => {
     console.log("Server is listening on port 3000");
 });
