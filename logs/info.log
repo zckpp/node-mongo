@@ -1,9 +1,0 @@
-{"level":"info","message":"Email sent: 250 2.0.0 OK  1573656743 189sm1037423qki.10 - gsmtp"}
-{ level: 'info',
-  message:
-   'Email sent: 250 2.0.0 OK  1573662848 b13sm1345063qtj.64 - gsmtp',
-  timestamp: '2019-11-13 11:34:08' }
-{ level: 'info',
-  message:
-   'Email sent: 250 2.0.0 OK  1573663320 7sm1254342qkf.67 - gsmtp',
-  timestamp: '2019-11-13 11:42:00' }
